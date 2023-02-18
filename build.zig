@@ -5,11 +5,94 @@ pub fn build(b: *Builder) void {
     const target = b.standardTargetOptions(.{});
     const optimize = b.standardOptimizeOption(.{});
 
+    const http_parser_dep = b.dependency("http_parser", .{
+        .target = target,
+        .optimize = optimize,
+    });
+
+    const libz_dep = b.dependency("libz", .{
+        .target = target,
+        .optimize = optimize,
+    });
+
+    const pcre_dep = b.dependency("pcre", .{
+        .target = target,
+        .optimize = optimize,
+    });
+
     const libgitz = b.addStaticLibrary(.{
         .name = "gitz",
         .target = target,
         .optimize = optimize,
     });
+
+    libgitz.linkLibrary(http_parser_dep.artifact("http_parser"));
+    libgitz.linkLibrary(libz_dep.artifact("z"));
+    libgitz.linkLibrary(pcre_dep.artifact("pcre"));
+
+    const features_h = b.addConfigHeader(.{
+        .style = .{ .cmake = .{ .path = "src/util/git2_features.h.in" } }
+    }, .{
+        .GIT_DEBUG_POOL = null,
+        .GIT_DEBUG_STRICT_ALLOC = null,
+        .GIT_DEBUG_STRICT_OPEN = null,
+
+        .GIT_THREADS = 1,
+        .GIT_WIN32_LEAKCHECK = null,
+
+        .GIT_ARCH_64 = 1,
+        .GIT_ARCH_32 = null,
+
+        .GIT_USE_ICONV = null,
+        .GIT_USE_NSEC = null,
+        .GIT_USE_STAT_MTIM = 1,
+        .GIT_USE_STAT_MTIMESPEC = null,
+        .GIT_USE_STAT_MTIME_NSEC = null,
+        .GIT_USE_FUTIMENS = 1,
+
+        .GIT_REGEX_REGCOMP_L = null,
+        .GIT_REGEX_REGCOMP = null,
+        .GIT_REGEX_PCRE = 1,
+        .GIT_REGEX_PCRE2 = null,
+        .GIT_REGEX_BUILTIN = null,
+
+        .GIT_QSORT_R_BSD = null,
+        .GIT_QSORT_R_GNU = 1,
+        .GIT_QSORT_S = null,
+
+        .GIT_SSH = null,
+        .GIT_SSH_MEMORY_CREDENTIALS = null,
+
+        .GIT_NTLM = null,
+        .GIT_GSSAPI = null,
+        .GIT_GSSFRAMEWORK = null,
+
+        .GIT_WINHTTP = null,
+        .GIT_HTTPS = 1,
+        .GIT_OPENSSL = 1,
+        .GIT_OPENSSL_DYNAMIC = null,
+        .GIT_SECURE_TRANSPORT = null,
+        .GIT_MBEDTLS = null,
+
+        .GIT_SHA1_COLLISIONDETECT = null,
+        .GIT_SHA1_WIN32 = null,
+        .GIT_SHA1_COMMON_CRYPTO = null,
+        .GIT_SHA1_OPENSSL = 1,
+        .GIT_SHA1_OPENSSL_DYNAMIC = null,
+        .GIT_SHA1_MBEDTLS = null,
+
+        .GIT_SHA256_BUILTIN = null,
+        .GIT_SHA256_WIN32 = null,
+        .GIT_SHA256_COMMON_CRYPTO = null,
+        .GIT_SHA256_OPENSSL = 1,
+        .GIT_SHA256_OPENSSL_DYNAMIC = null,
+        .GIT_SHA256_MBEDTLS = null,
+
+        .GIT_RAND_GETENTROPY = 1,
+        .GIT_RAND_GETLOADAVG = 1,
+    });
+
+    libgitz.addConfigHeader(features_h);
     libgitz.linkLibC();
     libgitz.addIncludePath("./src/util");
     libgitz.addIncludePath("./src/include");
@@ -124,6 +207,78 @@ pub fn build(b: *Builder) void {
         "src/libgit2/tree.c",
         "src/libgit2/tree-cache.c",
         "src/libgit2/worktree.c",
+
+        "src/libgit2/streams/mbedtls.c",
+        "src/libgit2/streams/openssl.c",
+        "src/libgit2/streams/openssl_dynamic.c",
+        "src/libgit2/streams/openssl_legacy.c",
+        "src/libgit2/streams/registry.c",
+        "src/libgit2/streams/socket.c",
+        "src/libgit2/streams/stransport.c",
+        "src/libgit2/streams/tls.c",
+
+        "src/libgit2/transports/auth.c",
+        "src/libgit2/transports/auth_negotiate.c",
+//        "src/libgit2/transports/auth_ntlm.c",
+        "src/libgit2/transports/credential.c",
+        "src/libgit2/transports/credential_helpers.c",
+        "src/libgit2/transports/git.c",
+        "src/libgit2/transports/http.c",
+        "src/libgit2/transports/httpclient.c",
+        "src/libgit2/transports/local.c",
+        "src/libgit2/transports/smart.c",
+        "src/libgit2/transports/smart_pkt.c",
+        "src/libgit2/transports/smart_protocol.c",
+        "src/libgit2/transports/ssh.c",
+        "src/libgit2/transports/winhttp.c",
+
+        "src/libgit2/xdiff/xdiffi.c",
+        "src/libgit2/xdiff/xemit.c",
+        "src/libgit2/xdiff/xhistogram.c",
+        "src/libgit2/xdiff/xmerge.c",
+        "src/libgit2/xdiff/xpatience.c",
+        "src/libgit2/xdiff/xprepare.c",
+        "src/libgit2/xdiff/xutils.c",
+
+        "src/util/alloc.c",
+        "src/util/date.c",
+        "src/util/filebuf.c",
+        "src/util/fs_path.c",
+        "src/util/futils.c",
+        "src/util/hash.c",
+        "src/util/net.c",
+        "src/util/pool.c",
+        "src/util/posix.c",
+        "src/util/pqueue.c",
+        "src/util/rand.c",
+        "src/util/regexp.c",
+        "src/util/runtime.c",
+        "src/util/sortedcache.c",
+        "src/util/str.c",
+        "src/util/strmap.c",
+        "src/util/thread.c",
+        "src/util/tsort.c",
+        "src/util/utf8.c",
+        "src/util/util.c",
+        "src/util/varint.c",
+        "src/util/vector.c",
+        "src/util/wildmatch.c",
+        "src/util/zstream.c",
+
+        "src/util/allocators/failalloc.c",
+        "src/util/allocators/stdalloc.c",
+
+        "src/util/hash/openssl.c",
+
+        "src/util/unix/map.c",
+        "src/util/unix/realpath.c",
+//        "src/util/hash/builtin.c",
+ //       "src/util/hash/collisiondetect.c",
+ //       "src/util/hash/common_crypto.c",
+//        "src/util/hash/mbedtls.c",
+ //       "src/util/hash/rfc6234/sha224-256.c",
+  //      "src/util/hash/sha1dc/sha1.c",
+  //      "src/util/hash/sha1dc/ubc_check.c",
     }, &.{
         "-Wall",
         "-W",
@@ -133,4 +288,53 @@ pub fn build(b: *Builder) void {
     });
     libgitz.install();
     libgitz.installHeadersDirectory("include", "gitz");
+
+    // to ensure linking works
+    const examples = b.addExecutable(.{
+        .name = "clone",
+        .target = target,
+        .optimize = optimize
+    });
+    examples.addCSourceFiles(&.{
+        "examples/add.c",
+        "examples/args.c",
+        "examples/blame.c",
+        "examples/cat-file.c",
+        "examples/checkout.c",
+        "examples/clone.c",
+        "examples/commit.c",
+        "examples/common.c",
+        "examples/config.c",
+        "examples/describe.c",
+        "examples/diff.c",
+        "examples/fetch.c",
+        "examples/for-each-ref.c",
+        "examples/general.c",
+        "examples/index-pack.c",
+        "examples/init.c",
+        "examples/lg2.c",
+        "examples/log.c",
+        "examples/ls-files.c",
+        "examples/ls-remote.c",
+        "examples/merge.c",
+        "examples/push.c",
+        "examples/remote.c",
+        "examples/rev-list.c",
+        "examples/rev-parse.c",
+        "examples/show-index.c",
+        "examples/stash.c",
+        "examples/status.c",
+        "examples/tag.c",
+    }, &.{
+        "-Wall",
+        "-W",
+        "-Wstrict-prototypes",
+        "-Wwrite-strings",
+        "-Wno-missing-field-initializers",
+    });
+    examples.addIncludePath("./include");
+    examples.linkLibC();
+    examples.linkLibrary(libgitz);
+    examples.linkSystemLibrary("openssl");
+    examples.install();
 }

@@ -1,0 +1,18 @@
+.{
+  .name = "libgitz",
+  .version = "0.1.0",
+  .dependencies = .{
+    .http_parser = .{
+      .url = "https://github.com/terrablue/http_parser/archive/f9e15eb744879e87257fc7413749c94924ae5b2e.tar.gz",
+      .hash = "12204ec29ae19dea33908c65bbb6a79e801b233e6fa065f87b7a9396c554a41ea5da",
+    },
+    .libz = .{
+      .url = "https://github.com/andrewrk/libz/archive/9e71b746b83d2b5bf5eb247663eb65a52cf0f68f.tar.gz",
+      .hash = "12204ea3490e5bdf379f56aa11784d906aed6d4c553c724fa5427169915f2cf4a651",
+    },
+    .pcre = .{
+      .url = "https://github.com/terrablue/pcre/archive/1987875a2c9fc5a2f8d023a80773182ee45ca8fa.tar.gz",
+      .hash = "12201194ef9b4bd4fb5b0fa3e8c9de96d3b1c29d0d0aea046a0b37b235ed00545640",
+    },
+  },
+}
