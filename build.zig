@@ -94,6 +94,7 @@ pub fn build(b: *Builder) void {
 
     libgitz.addConfigHeader(features_h);
     libgitz.linkLibC();
+    libgitz.linkSystemLibrary("openssl");
     libgitz.addIncludePath("./src/util");
     libgitz.addIncludePath("./src/include");
     libgitz.addIncludePath("./src/include/git2");
@@ -335,6 +336,5 @@ pub fn build(b: *Builder) void {
     examples.addIncludePath("./include");
     examples.linkLibC();
     examples.linkLibrary(libgitz);
-    examples.linkSystemLibrary("openssl");
     examples.install();
 }
