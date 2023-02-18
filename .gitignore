@@ -6,3 +6,9 @@
 CMakeSettings.json
 .vs
 .idea
+zig*
+*.cmake
+Makefile
+CMakeFiles
+CMakeCache.txt
+*.pc
