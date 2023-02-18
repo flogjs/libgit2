@@ -1,3 +1,11 @@
+This is a fork of [libgit2](https://libgit2.org/), packaged for Zig. Vendored
+dependencies have been extracted to their own repositories, and the build
+system has been replaced with `build.zig`.
+
+Original README follows:
+
+----------------
+
 libgit2 - the Git linkable library
 ==================================
 
