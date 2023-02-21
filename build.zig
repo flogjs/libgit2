@@ -292,7 +292,7 @@ pub fn build(b: *Builder) void {
 
     // to ensure linking works
     const examples = b.addExecutable(.{
-        .name = "clone",
+        .name = "examples",
         .target = target,
         .optimize = optimize
     });
